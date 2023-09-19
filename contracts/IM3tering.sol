@@ -4,6 +4,17 @@ pragma solidity ^0.8.20;
 interface IM3tering {
     error InputIsZero();
     error Unauthorized();
+    error TransferError();
+    error ApprovalFailed();
+
+    event Deposit(
+        uint256 indexed amount,
+        address indexed from,
+        address indexed to,
+        uint256 timestamp
+    );
+
+    event Claim(address indexed to, uint256 indexed amount, uint256 indexed timestamp);
 
     event Revenue(
         uint256 indexed tokenId,
@@ -34,7 +45,7 @@ interface IM3tering {
 
     function pay(uint256 tokenId, uint256 amount) external;
 
-    function claim(uint256 amountOutMin, uint256 deadline) external;
+    function claim(uint256 mintId) external;
 
     function stateOf(uint256 tokenId) external view returns (bool);
 

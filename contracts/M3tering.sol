@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-import "./DEX/DAI2SLX.sol";
+import "./ISolaxy.sol";
 import "./IM3tering.sol";
 
 /// @custom:security-contact info@whynotswitch.com
@@ -13,6 +14,8 @@ contract M3tering_V1 is IM3tering, Pausable, AccessControl {
     mapping(uint256 => State) public states;
     mapping(address => uint256) public revenues;
 
+    IERC20 public constant DAI = IERC20(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // ioDAI
+    ISolaxy public constant SLX = ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b);
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     bytes32 public constant W3BSTREAM_ROLE = keccak256("W3BSTREAM_ROLE");
@@ -41,18 +44,24 @@ contract M3tering_V1 is IM3tering, Pausable, AccessControl {
     }
 
     function pay(uint256 tokenId, uint256 amount) external whenNotPaused {
-        DAI2SLX.depositDAI(amount);
+        if (!DAI.transferFrom(msg.sender, address(this), amount)) revert TransferError();
 
         uint256 fee = (amount * 3) / 1000;
         revenues[feeAddress] += fee;
         revenues[_ownerOf(tokenId)] += amount - fee;
+
+        emit Deposit(amount, msg.sender, address(this), block.timestamp);
         emit Revenue(tokenId, amount, tariffOf(tokenId), msg.sender, block.timestamp);
     }
 
-    function claim(uint256 amountOutMin, uint256 deadline) external whenNotPaused {
+    function claim(uint256 mintId) external whenNotPaused {
         uint256 amount = revenues[msg.sender];
+        if (amount < 1) revert InputIsZero();
         revenues[msg.sender] = 0;
-        DAI2SLX.claimSLX(amount, amountOutMin, deadline);
+
+        if (!DAI.approve(address(SLX), amount)) revert ApprovalFailed();
+        SLX.mint(amount, mintId);
+        emit Claim(msg.sender, amount, block.timestamp);
     }
 
     function stateOf(uint256 tokenId) external view returns (bool) {
