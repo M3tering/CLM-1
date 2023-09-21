@@ -5,6 +5,7 @@ interface ISolaxy {
     error DaiError();
     error Prohibited();
     error Undersupply();
+    error ZeroAddress();
     error StateExpired();
 
     event Mint(
