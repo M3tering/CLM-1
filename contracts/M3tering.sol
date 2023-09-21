@@ -24,9 +24,9 @@ contract M3tering_V1 is IM3tering, Pausable, AccessControl {
     address public feeAddress;
 
     constructor() {
-        if (address(SLX) == address(0)) revert ZeroAddress();
-        if (address(DAI) == address(0)) revert ZeroAddress();
         if (address(M3ter) == address(0)) revert ZeroAddress();
+        if (address(DAI) == address(0)) revert ZeroAddress();
+        if (address(SLX) == address(0)) revert ZeroAddress();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(W3BSTREAM_ROLE, msg.sender);
