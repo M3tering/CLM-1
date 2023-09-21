@@ -70,6 +70,10 @@ contract M3tering_V1 is IM3tering, Pausable, AccessControl {
         emit Claim(msg.sender, amount, block.timestamp);
     }
 
+    function estimateReward() external view returns (uint256){
+        return SLX.estimateMint(revenues[msg.sender]);
+    }
+
     function stateOf(uint256 tokenId) external view returns (bool) {
         return states[tokenId].state;
     }

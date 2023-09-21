@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 interface IM3tering {
     error InputIsZero();
+    error ZeroAddress();
     error Unauthorized();
     error TransferError();
     error ApprovalFailed();
@@ -47,7 +48,9 @@ interface IM3tering {
 
     function claim(uint256 mintId) external;
 
+    function estimateReward() external view returns (uint256);
+
     function stateOf(uint256 tokenId) external view returns (bool);
 
-    function tariffOf(uint256 tokenId) external view returns (uint);
+    function tariffOf(uint256 tokenId) external view returns (uint256);
 }
