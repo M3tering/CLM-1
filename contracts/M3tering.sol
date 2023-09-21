@@ -15,7 +15,7 @@ contract M3tering_V1 is IM3tering, Pausable, AccessControl {
     mapping(address => uint256) public revenues;
 
     IERC20 public constant DAI = IERC20(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // ioDAI
-    ISolaxy public constant SLX = ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b);
+    ISolaxy public constant SLX = ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add Solaxy address
     IERC721 public constant M3ter = IERC721(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add M3ter address
 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
