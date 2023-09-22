@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.9;
 
 interface IM3tering {
     error InputIsZero();
     error ZeroAddress();
     error Unauthorized();
     error TransferError();
-    error ApprovalFailed();
 
-    event Deposit(
-        uint256 indexed amount,
-        address indexed from,
-        address indexed to,
-        uint256 timestamp
+    event Switch(
+        uint256 indexed tokenId,
+        bool indexed state,
+        uint256 indexed timestamp,
+        address from
     );
-
-    event Claim(address indexed to, uint256 indexed amount, uint256 indexed timestamp);
 
     event Revenue(
         uint256 indexed tokenId,
@@ -25,11 +22,10 @@ interface IM3tering {
         uint256 timestamp
     );
 
-    event Switch(
-        uint256 indexed tokenId,
-        bool indexed state,
-        uint256 indexed timestamp,
-        address from
+    event Claim(
+        address indexed to,
+        uint256 indexed amount,
+        uint256 indexed timestamp
     );
 
     struct State {
@@ -45,10 +41,6 @@ interface IM3tering {
     function _setTariff(uint256 tokenId, uint256 tariff) external;
 
     function pay(uint256 tokenId, uint256 amount) external;
-
-    function claim(uint256 mintId) external;
-
-    function estimateReward() external view returns (uint256);
 
     function stateOf(uint256 tokenId) external view returns (bool);
 

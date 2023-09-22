@@ -6,11 +6,11 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-import "./ISolaxy.sol";
-import "./IM3tering.sol";
+import "./interfaces/ISolaxy.sol";
+import "./interfaces/IVersion_1.sol";
 
 /// @custom:security-contact info@whynotswitch.com
-contract M3tering_V1 is IM3tering, Pausable, AccessControl {
+contract M3tering_V1 is IVersion_1, Pausable, AccessControl {
     mapping(uint256 => State) public states;
     mapping(address => uint256) public revenues;
 
