@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "./IM3tering.sol";
+import "./protocol-abc/IProtocol.sol";
 
-interface IVersion_1 is IM3tering {
+interface IM3tering_V1 is IProtocol {
     function claim(uint256 mintId) external;
 
     function estimateReward() external view returns (uint256);
