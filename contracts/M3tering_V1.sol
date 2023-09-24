@@ -24,7 +24,7 @@ contract M3tering_V1 is Protocol, IM3tering_V1 {
         emit Claim(msg.sender, amount, block.timestamp);
     }
 
-    function estimateReward() external view returns (uint256) {
-        return SLX.estimateMint(revenues[msg.sender]);
+    function estimateReward(address owner) external view returns (uint256) {
+        return SLX.estimateMint(revenues[owner]);
     }
 }
