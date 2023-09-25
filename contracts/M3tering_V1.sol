@@ -6,7 +6,7 @@ import "./interfaces/IM3tering_V1.sol";
 import "./interfaces/ISolaxy.sol";
 
 /// @custom:security-contact info@whynotswitch.com
-contract M3tering_V1 is Protocol, IM3tering_V1 {
+contract M3tering_V1 is IM3tering_V1, Protocol {
     ISolaxy public constant SLX =
         ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add Solaxy address
 
