@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+
 import "./protocol-abc/Protocol.sol";
 import "./interfaces/IM3tering_V1.sol";
 import "./interfaces/ISolaxy.sol";
@@ -14,17 +15,17 @@ contract M3tering_V1 is IM3tering_V1, Protocol {
         if (address(SLX) == address(0)) revert ZeroAddress();
     }
 
-    function claim(uint256 mintId) external whenNotPaused {
+    function claim(address receiver, uint256 tokensOut) external whenNotPaused {
         uint256 amount = revenues[msg.sender];
         if (amount < 1) revert InputIsZero();
         revenues[msg.sender] = 0;
 
         if (!DAI.approve(address(SLX), amount)) revert Unauthorized();
-        SLX.mint(amount, mintId);
         emit Claim(msg.sender, amount, block.timestamp);
+        SLX.deposit(amount, receiver, tokensOut);
     }
 
     function estimateReward(address owner) external view returns (uint256) {
-        return SLX.estimateMint(revenues[owner]);
+        return SLX.previewDeposit(revenues[owner]);
     }
 }
