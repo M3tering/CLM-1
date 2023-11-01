@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-
 import "./protocol-abc/Protocol.sol";
 import "./interfaces/IM3tering_V1.sol";
 import "./interfaces/ISolaxy.sol";
@@ -22,7 +21,7 @@ contract M3tering_V1 is IM3tering_V1, Protocol {
 
         if (!DAI.approve(address(SLX), amount)) revert Unauthorized();
         emit Claim(msg.sender, amount, block.timestamp);
-        SLX.deposit(amount, receiver, tokensOut);
+        SLX.safeDeposit(amount, receiver, tokensOut);
     }
 
     function estimateReward(address owner) external view returns (uint256) {
