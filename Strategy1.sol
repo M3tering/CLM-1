@@ -6,7 +6,7 @@ import "./interfaces/IStrategy.sol";
 import "./interfaces/ISolaxy.sol";
 
 /// @custom:security-contact info@whynotswitch.com
-contract Strategy_V1 is IStrategy {
+contract Strategy1 is IStrategy {
     error TransferError();
 
     IERC20 public constant DAI =
@@ -14,13 +14,13 @@ contract Strategy_V1 is IStrategy {
     ISolaxy public constant SLX =
         ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add Solaxy address
 
-    function claim(
-        uint256 revenueAmount,
-        address receiver,
-        uint256 outputAmount
-    ) public {
-        if (!DAI.transferFrom(msg.sender, receiver, revenueAmount))
+    function claim(uint256 assets, bytes calldata data) external {
+        (address receiver, uint256 minSharesOut) = abi.decode(
+            data,
+            (address, uint256)
+        );
+        if (!DAI.transferFrom(msg.sender, receiver, assets))
             revert TransferError();
-        SLX.safeDeposit(revenueAmount, receiver, outputAmount);
+        SLX.safeDeposit(assets, receiver, minSharesOut);
     }
 }
