@@ -7,6 +7,7 @@ import "./interfaces/ISolaxy.sol";
 
 /// @custom:security-contact info@whynotswitch.com
 contract Strategy1 is IStrategy {
+    error Unauthorized();
     error TransferError();
 
     IERC20 public constant DAI =
@@ -19,8 +20,9 @@ contract Strategy1 is IStrategy {
             data,
             (address, uint256)
         );
-        if (!DAI.transferFrom(msg.sender, receiver, assets))
+        if (!DAI.transferFrom(msg.sender, address(this), assets))
             revert TransferError();
+        if (!DAI.approve(address(SLX), assets)) revert Unauthorized();
         SLX.safeDeposit(assets, receiver, minSharesOut);
     }
 }
