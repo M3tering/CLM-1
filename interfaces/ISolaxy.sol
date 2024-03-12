@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.24;
+
 interface ISolaxy {
-    function safeDeposit(uint256 assets, address receiver, uint256 minSharesOut) external returns (uint256 shares);
+    function safeDeposit(
+        uint256 assets,
+        address receiver,
+        uint256 minSharesOut
+    ) external returns (uint256 shares);
 }

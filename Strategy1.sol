@@ -1,28 +1,40 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.24;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.3/contracts/token/ERC20/IERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.2/contracts/interfaces/IERC4626.sol";
 import "./interfaces/IStrategy.sol";
 import "./interfaces/ISolaxy.sol";
+import "./interfaces/IWXDAI.sol";
 
 /// @custom:security-contact info@whynotswitch.com
 contract Strategy1 is IStrategy {
-    error Unauthorized();
-    error TransferError();
+    error TransferErrorXDAI();
+    error UnauthorizedSDAI();
+    error UnauthorizedSLX();
 
-    IERC20 public constant DAI =
-        IERC20(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b);
+    IWXDAI public constant WXDAI =
+        IWXDAI(0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d);
+    IERC4626 public constant SDAI =
+        IERC4626(0xaf204776c7245bF4147c2612BF6e5972Ee483701);
     ISolaxy public constant SLX =
         ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add Solaxy address
 
-    function claim(uint256 assets, bytes calldata data) external {
+    function claim(bytes calldata data) external payable {
         (address receiver, uint256 minSharesOut) = abi.decode(
             data,
             (address, uint256)
         );
-        if (!DAI.transferFrom(msg.sender, address(this), assets))
-            revert TransferError();
-        if (!DAI.approve(address(SLX), assets)) revert Unauthorized();
-        SLX.safeDeposit(assets, receiver, minSharesOut);
+
+        // Wrap xDAI msg.value
+        WXDAI.deposit{value: msg.value}();
+
+        // deposit wrapped xDAI for sDAI
+        if (!WXDAI.approve(address(SDAI), msg.value)) revert UnauthorizedSDAI();
+        SDAI.deposit(msg.value, receiver);
+        uint256 amountSDAI = SDAI.balanceOf(address(this));
+
+        // deposit sDAI to mint Solaxy
+        if (!SDAI.approve(address(SLX), amountSDAI)) revert UnauthorizedSLX();
+        SLX.safeDeposit(amountSDAI, receiver, minSharesOut);
     }
 }
