@@ -2,12 +2,12 @@
 pragma solidity ^0.8.24;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.2/contracts/interfaces/IERC4626.sol";
-import "./interfaces/IStrategy.sol";
+import "./interfaces/ICLM.sol";
 import "./interfaces/ISolaxy.sol";
 import "./interfaces/IWXDAI.sol";
 
 /// @custom:security-contact info@whynotswitch.com
-contract Strategy1 is IStrategy {
+contract CLM1 is ICLM {
     error TransferErrorXDAI();
     error UnauthorizedSDAI();
     error UnauthorizedSLX();
