@@ -17,7 +17,7 @@ contract CLM1 is ICLM {
     IERC4626 public constant SDAI =
         IERC4626(0xaf204776c7245bF4147c2612BF6e5972Ee483701);
     ISolaxy public constant SLX =
-        ISolaxy(0x1CbAd85Aa66Ff3C12dc84C5881886EEB29C1bb9b); // TODO: add Solaxy address
+        ISolaxy(0xF4F3c1666E750E014DE65c50d0e98B1263E678B8);
 
     function claim(bytes calldata data) external payable {
         (address receiver, uint256 minSharesOut) = abi.decode(
@@ -30,8 +30,7 @@ contract CLM1 is ICLM {
 
         // deposit wrapped xDAI for sDAI
         if (!WXDAI.approve(address(SDAI), msg.value)) revert UnauthorizedSDAI();
-        SDAI.deposit(msg.value, receiver);
-        uint256 amountSDAI = SDAI.balanceOf(address(this));
+        uint256 amountSDAI = SDAI.deposit(msg.value, address(this));
 
         // deposit sDAI to mint Solaxy
         if (!SDAI.approve(address(SLX), amountSDAI)) revert UnauthorizedSLX();
